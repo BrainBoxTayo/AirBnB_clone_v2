@@ -61,6 +61,7 @@ class FileStorage:
             pass
 
     def delete(self, obj = None):
+        """Deletes entity from objects"""
         if obj == None:
             return
         if (obj in FileStorage.__objects.values()):
