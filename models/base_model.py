@@ -5,29 +5,39 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
+
 Base = declarative_base()
+
+
 class BaseModel:
     """A base class for all hbnb models"""
+
+    id = Column(String(length=60), nullable=False, primary_key=True, default=str(uuid.uuid4()))
+    created_at = Column(DateTime, nullable=False,
+                             default=datetime.now())
+    updated_at = Column(
+        DateTime, nullable=False, default=datetime.now())
+
     def __init__(self, *args, **kwargs):
         """Instatntiates a new model"""
-        if 'created_at' not in kwargs.keys() or 'updated_at' not in kwargs.keys():
-            self.id = Column(String, nullable=False, primary_key=True)
-            self.created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
-            self.updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
-           
-            for key, value in kwargs.items():
-                if key != "__class__":
-                    if key == 'created_at' or key == 'updated_at':
-                        d_format = "%Y-%m-%dT%H:%M:%S.%f"
-                        setattr(self, key, datetime.strptime(value, d_format))
-                    elif key == 'id':
-                        setattr(self, key, str(value))
-                    else:
-                        setattr(self, key, value)
-        elif not kwargs:
-            self.id = Column(String, nullable=False, primary_key=True)
-            self.created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
-            self.updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
+        id_set = False
+        for key, value in kwargs.items():
+            if key != "__class__":
+                if key == 'created_at' or key == 'updated_at':
+                    d_format = "%Y-%m-%dT%H:%M:%S.%f"
+                    setattr(self, key, datetime.strptime(value, d_format))
+                elif key == 'id':
+                    id_set = True
+                    setattr(self, key, str(value))
+                else:
+                    setattr(self, key, value)
+        if not kwargs:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
+    
+            
+            
 
     def __str__(self):
         """Returns a string representation of the instance"""
