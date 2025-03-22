@@ -26,7 +26,7 @@ class DBStorage:
             f"{dialect}+{driver}://{HBNB_MYSQL_USER}:{HBNB_MYSQL_PWD}@{HBNB_MYSQL_HOST}/{HBNB_MYSQL_DB}", pool_pre_ping=True)
 
         if (HBNB_ENV == 'test'):
-            Base.metadata.drop_all(bind=self)
+            Base.metadata.drop_all(bind=self.__engine)
 
     def all(self, cls=None):
         """
@@ -46,6 +46,8 @@ class DBStorage:
             'Review': Review
         }
         objects = []
+        if self.__session is None:
+             self.reload()
         if cls is None:
             for cls_name, cls_obj in classes.items():
                 objects.extend(self.__session.query(cls_obj).all())
@@ -73,6 +75,7 @@ class DBStorage:
         """delete obj if not none"""
         if obj is not None:
             self.__session.delete(obj)
+            self.__session.commit()
 
     def reload(self):
         """create all tables in the database"""

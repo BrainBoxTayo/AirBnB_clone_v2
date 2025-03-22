@@ -12,7 +12,7 @@ Base = declarative_base()
 class BaseModel:
     """A base class for all hbnb models"""
 
-    id = Column(String(length=60), nullable=False, primary_key=True, default=str(uuid.uuid4()))
+    id = Column(String(length=60), nullable=False, primary_key=True, default=lambda: str(uuid.uuid4()))
     created_at = Column(DateTime, nullable=False,
                              default=datetime.now())
     updated_at = Column(
@@ -20,14 +20,14 @@ class BaseModel:
 
     def __init__(self, *args, **kwargs):
         """Instatntiates a new model"""
-        id_set = False
+        super().__init__()
         for key, value in kwargs.items():
             if key != "__class__":
                 if key == 'created_at' or key == 'updated_at':
                     d_format = "%Y-%m-%dT%H:%M:%S.%f"
                     setattr(self, key, datetime.strptime(value, d_format))
                 elif key == 'id':
-                    id_set = True
+
                     setattr(self, key, str(value))
                 else:
                     setattr(self, key, value)
