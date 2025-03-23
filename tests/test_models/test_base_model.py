@@ -19,7 +19,6 @@ class test_basemodel(unittest.TestCase):
 
     def setUp(self):
         """ """
-        pass
 
     def tearDown(self):
         try:
